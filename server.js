@@ -145,7 +145,7 @@ function updateGameState(){
     }
 
     // set delay
-    setTimeout(updateGameState, 100);
+    setTimeout(updateGameState, 50);
 }
 
 
