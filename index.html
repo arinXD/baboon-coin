@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baboon Kuay</title>
+    <!-- <link rel="stylesheet" href="./style.css"> -->
+    <style>
+        .container {
+            margin-top: 15px;
+        }
+
+        #show-winner {
+            text-align: center;
+            font-weight: bold;
+            font-size: 3em;
+            padding: 15px 0;
+            display: none;
+        }
+
+        .show {
+            display: block !important;
+        }
+
+        .py {
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .px {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .c-white {
+            color: white;
+        }
+
+        #divPlayers {
+            /* display: flex;
+    justify-content: center;
+    align-items: center; */
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            justify-content: center;
+            grid-gap: 2em;
+        }
+
+        #divBoard {
+            display: none;
+        }
+
+        .border {
+            border: 1px solid black;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .center {
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .mt {
+            margin-top: 5em !important;
+        }
+
+        .mx {
+            margin-left: 5em !important;
+            margin-right: 5em !important;
+        }
+
+        .show {
+            display: block !important;
+        }
+        .img-logo{
+            background: url(https://media-private.canva.com/g9wTg/MAFJTtg9wTg/1/t.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJWF6QO3UH4PAAJ6Q%2F20220921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220921T073152Z&X-Amz-Expires=84921&X-Amz-Signature=46098eb8524601c2740afccdcbd54dec0263b853e534d58ad078864dffa7b917&X-Amz-SignedHeaders=host&response-expires=Thu%2C%2022%20Sep%202022%2007%3A07%3A13%20GMT) no-repeat;
+            background-size: cover;
+            width: 5em;
+            height: 5em;
+            margin: 0 auto;
+        }
+        .logo{
+            width: fit-content;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="show-winner" class=""></div>
+    <div class="logo">
+        <div class="img-logo"></div>
+        <h1>BABOON COIN</h1>
+    </div>
+    Name <input type="text" id="txtClientName" value=""> <br> <br>
+    <button id='btnCreate'>New Game</button>
+    <button id='btnJoin'>Join Game</button>
+    <input type='text' id='txtGameId'>
+    <div id="gameid"></div>
+    <div class="container">
+        <div id='divPlayers' class="mt"></div>
+        <div id='divBoard' class="center mt"></div>
+    </div>
+
+    <script>
+        const btnCreate = document.getElementById("btnCreate");
+        const btnJoin = document.getElementById("btnJoin");
+        const txtGameId = document.getElementById("txtGameId");
+        const txtClientName = document.getElementById("txtClientName");
+        const divPlayers = document.getElementById("divPlayers");
+        const divBoard = document.getElementById("divBoard");
+
+        let clientId = null;
+        let gameId = null;
+        let clientName = null;
+        let playerColor = null;
+
+        // let IPaddress = "172.16.0.180"
+        let IPaddress = "10.199.120.145"
+
+
+        let ws = new WebSocket("ws://" + IPaddress + ":9090")
+
+        //wiring events
+        btnJoin.addEventListener("click", e => {
+
+            if (gameId === null) {
+                gameId = txtGameId.value;
+            }
+            if (clientName === null) {
+                clientName = txtClientName.value;
+            }
+            const payLoad = {
+                "method": "join",
+                "clientId": clientId,
+                "clientName": clientName,
+                "gameId": gameId,
+            }
+
+            ws.send(JSON.stringify(payLoad));
+            btnJoin.disabled = true;
+
+        })
+
+        btnCreate.addEventListener("click", e => {
+
+            const payLoad = {
+                "method": "create",
+                "clientId": clientId
+            }
+
+            ws.send(JSON.stringify(payLoad));
+
+        })
+
+        ws.onmessage = message => {
+            //message.data
+            const response = JSON.parse(message.data);
+            //connect
+            if (response.method === "connect") {
+                clientId = response.clientId;
+                console.log("Client id Set successfully " + clientId)
+            }
+
+            //create
+            if (response.method === "create") {
+                let Textgameid = document.createElement("p")
+                gameId = response.game.id;
+                console.log("game successfully created with id " + response.game.id + " with " + response.game.balls + " balls")
+                Textgameid.innerHTML = "GAME ID: " + gameId
+
+                document.getElementById("gameid").appendChild(Textgameid)
+            }
+
+
+            //update
+            if (response.method === "update") {
+
+                console.log(response);
+
+                if (!response.game.state) return;
+
+                for (const b of Object.keys(response.game.state)) {
+                    const color = response.game.state[b];
+                    const ballObject = document.getElementById("ball" + b);
+                    // set color
+                    // ballObject.style.backgroundColor = color
+                }
+
+                for (const c of Object.keys(response.game.state2)) {
+
+                    // get client id
+                    const new_score = response.game.state2[c];
+                    const element_p_scores = document.getElementById(c);
+                    element_p_scores.innerHTML = new_score
+
+                    // score
+                    let checkscore = parseInt(element_p_scores.innerHTML)
+                    let limit = 100
+
+                    if (checkscore > limit) {
+                        const showWinner = document.querySelector("#show-winner")
+                        showWinner.innerHTML = "The winner is " + response.game.state3[c]
+                        showWinner.classList.add("show")
+
+                    }
+
+                }
+
+            }
+
+            //join
+            if (response.method === "join") {
+                const game = response.game;
+
+                console.log(response);
+
+                while (divPlayers.firstChild)
+                    divPlayers.removeChild(divPlayers.firstChild)
+
+                game.clients.forEach(c => {
+
+                    // DIV NAME
+                    const d = document.createElement("div");
+                    d.style.width = "200px";
+                    d.style.background = c.color
+                    d.classList.add("py", "px", "c-white", "text-center")
+                    d.textContent = c.clientName;
+
+                    // DIV SCORE
+                    const p_scores = document.createElement("p");
+                    p_scores.classList.add("text-center")
+                    p_scores.textContent = "0"
+                    p_scores.setAttribute("id", c.clientId)
+
+                    // WRAPPER
+                    const wrap = document.createElement("div")
+                    wrap.classList.add("border")
+
+                    wrap.appendChild(d);
+                    wrap.appendChild(p_scores)
+
+                    divPlayers.appendChild(wrap);
+
+                    if (c.clientId === clientId) playerColor = c.color;
+                })
+
+
+                while (divBoard.firstChild)
+                    divBoard.removeChild(divBoard.firstChild)
+
+                // create button
+                // for (let i = 0; i < game.balls; i++) {
+                for (let i = 0; i < 1; i++) {
+                    const b = document.createElement("button");
+                    b.id = "ball" + (i + 1);
+                    b.tag = i + 1
+                    // b.textContent = i + 1
+                    b.textContent = "DIG"
+                    b.style.width = "150px"
+                    b.style.height = "150px"
+                    b.classList.add("mx")
+
+                    b.addEventListener("click", e => {
+                        const p_scores = document.getElementById(clientId).innerHTML;
+                        // b.style.background = playerColor
+                        const payLoad = {
+                            "method": "play",
+                            "clientId": clientId,
+                            "clientName": clientName,
+                            "gameId": gameId,
+                            "ballId": b.tag,
+                            "color": playerColor,
+                            "pscore": parseInt(p_scores) + 1,
+                        }
+
+                        ws.send(JSON.stringify(payLoad))
+                        console.log(payLoad);
+                    })
+                    divBoard.classList.add("show")
+                    divBoard.appendChild(b);
+
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
