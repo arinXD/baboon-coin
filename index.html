@@ -195,7 +195,7 @@
         let playerColor = null;
 
         // let IPaddress = "172.16.0.180"
-        let IPaddress = "192.168.8.14"
+        let IPaddress = "localhost"
 
 
         let ws = new WebSocket("ws://" + IPaddress + ":9090")
@@ -338,18 +338,18 @@
                 // create button
                 // for (let i = 0; i < game.balls; i++) {
                 for (let i = 0; i < 1; i++) {
-                    const b = document.createElement("button");
-                    b.id = "ball" + (i + 1);
-                    b.tag = i + 1
-                    b.textContent = i + 1
-                    b.textContent = "DIG"
-                    b.style.fontSize = "x-large"
-                    b.style.textAlign = "center"
-                    b.style.height = "300px"
-                    b.classList.add("mx","ww")
-                    
+                    // const b = document.createElement("button");
+                    // b.id = "ball" + (i + 1);
+                    // b.tag = i + 1
+                    // b.textContent = i + 1
+                    // b.textContent = "DIG"
+                    // b.style.fontSize = "x-large"
+                    // b.style.textAlign = "center"
+                    // b.style.height = "300px"
+                    // b.classList.add("mx","ww")
 
-                    b.addEventListener("click", e => {
+                    const bodyClick = document.body
+                    bodyClick.addEventListener("click", e => {
                         const p_scores = document.getElementById(clientId).innerHTML;
                         // b.style.background = playerColor
                         const payLoad = {
