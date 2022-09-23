@@ -9,9 +9,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
-        html {
-            cursor: pointer;
-        }
 
         .containerq {
             margin-top: 15px;
@@ -275,15 +272,12 @@
 
                     // score
                     let checkscore = parseInt(element_p_scores.innerHTML)
-                    let limit = 50
+                    let limit = 10
 
                     if (checkscore > limit) {
                         const showWinner = document.querySelector("#show-winner")
                         showWinner.innerHTML = "The winner is " + response.game.state3[c]
                         showWinner.classList.add("show")
-                        document.getElementById("ball1").disabled = true;
-                        const btnbb = document.querySelector("#ball1");
-                        btnbb.classList.add("dis");
                         const btnReset = document.querySelector("#reset");
                         btnReset.classList.add("show");
                     }
@@ -357,7 +351,7 @@
                             "clientId": clientId,
                             "clientName": clientName,
                             "gameId": gameId,
-                            "ballId": b.tag,
+                            // "ballId": b.tag,
                             "color": playerColor,
                             "pscore": parseInt(p_scores) + 1,
                         }
