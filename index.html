@@ -9,6 +9,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
+        html {
+            cursor: pointer;
+        }
+
         .containerq {
             margin-top: 15px;
         }
@@ -74,17 +78,22 @@
             margin-left: 5em;
             margin-right: 5em;
         }
+        .ww{
+            width: 100%;
+        }
 
         .show {
             display: block !important;
         }
 
         .img-logo {
-            background: url(https://media-private.canva.com/g9wTg/MAFJTtg9wTg/1/t.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJWF6QO3UH4PAAJ6Q%2F20220921%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220921T073152Z&X-Amz-Expires=84921&X-Amz-Signature=46098eb8524601c2740afccdcbd54dec0263b853e534d58ad078864dffa7b917&X-Amz-SignedHeaders=host&response-expires=Thu%2C%2022%20Sep%202022%2007%3A07%3A13%20GMT) no-repeat;
+            background: url(https://static.wixstatic.com/media/79d26a_cd24c74a32e14853ad5cc299c0d98b97f000.jpg/v1/fill/w_320,h_300,al_c,q_80,usm_0.33_1.00_0.00,enc_auto/79d26a_cd24c74a32e14853ad5cc299c0d98b97f000.jpg) no-repeat;
             background-size: cover;
-            width: 5em;
-            height: 5em;
+            width: 10em;
+            height: 10em;
             margin: 0 auto;
+            border-radius: 50%;
+            border: solid 5px #FFCA2C;
         }
 
         .logo {
@@ -110,25 +119,30 @@
         });
     </script>
     <!-- <script>
-        var timeleft = 5;
+        var timeleft = 1000;
         var downloadTimer = setInterval(function () {
             if (timeleft <= 0) {
+                if (timeleft === 0) {
+                    console.log("test");
+                }
                 clearInterval(downloadTimer);
                 document.getElementById("countdown").innerHTML = "Finished";
             } else {
                 document.getElementById("countdown").innerHTML = timeleft + " seconds remaining";
             }
             timeleft -= 1;
+
         }, 1000);
+
     </script> -->
 </head>
 
 <body>
     <div class="container">
         <div id="show-winner" class="alert alert-warning alert-dismissible fade mt-5" role="alert"></div>
-        <!-- <div id="countdown"></div> -->
+        <!-- <div id="countdown" class = "dis"></div> -->
         <div class="logo mar">
-            <div class="img-logo text-center"></div>
+            <div class="img-logo text-center mb-3"></div>
             <h1 class="text-center">BABOON COIN</h1>
         </div>
         <div class="d-grid gap-2 mb-3">
@@ -150,7 +164,6 @@
             <div class="d-grid gap-2">
                 <button class="btn btn-warning" type="button" id='btnJoin'>Join Game</button>
             </div>
-
         </div>
     </div>
     <div id="gameid"></div>
@@ -168,6 +181,7 @@
     <script>
 
 
+
         const btnCreate = document.getElementById("btnCreate");
         const btnJoin = document.getElementById("btnJoin");
         const txtGameId = document.getElementById("txtGameId");
@@ -181,7 +195,7 @@
         let playerColor = null;
 
         // let IPaddress = "172.16.0.180"
-        // let IPaddress = "10.199.120.144"
+        let IPaddress = "192.168.8.14"
 
 
         let ws = new WebSocket("ws://" + IPaddress + ":9090")
@@ -261,7 +275,7 @@
 
                     // score
                     let checkscore = parseInt(element_p_scores.innerHTML)
-                    let limit = 5
+                    let limit = 50
 
                     if (checkscore > limit) {
                         const showWinner = document.querySelector("#show-winner")
@@ -281,6 +295,9 @@
             //join
             if (response.method === "join") {
                 const game = response.game;
+
+                // const countdown = document.getElementById("countdown");
+                // countdown.className = ""
 
                 console.log(response);
 
@@ -324,13 +341,13 @@
                     const b = document.createElement("button");
                     b.id = "ball" + (i + 1);
                     b.tag = i + 1
-                    // b.textContent = i + 1
+                    b.textContent = i + 1
                     b.textContent = "DIG"
                     b.style.fontSize = "x-large"
                     b.style.textAlign = "center"
-                    b.style.width = "300px"
                     b.style.height = "300px"
-                    b.classList.add("mx")
+                    b.classList.add("mx","ww")
+                    
 
                     b.addEventListener("click", e => {
                         const p_scores = document.getElementById(clientId).innerHTML;

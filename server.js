@@ -2,7 +2,7 @@ const http = require("http");
 const app = require("express")();
 app.get("/", (req,res)=> res.sendFile(__dirname + "/index.html"))
 
-app.listen(9091, ()=>console.log("Listening on http port 9091"))
+app.listen(8888, ()=>console.log("Listening on http port 8888"))
 const websocketServer = require("websocket").server
 const httpServer = http.createServer();
 httpServer.listen(9090, () => console.log("Listening.. on 9090"))
