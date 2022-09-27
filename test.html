@@ -340,8 +340,7 @@
                     // b.style.textAlign = "center"
                     // b.style.height = "300px"
                     // b.classList.add("mx","ww")
-                    if (Plv == 1) {
-                        const bodyClick = document.body
+                    const bodyClick = document.body
                         bodyClick.addEventListener("click", e => {
                             const p_scores = document.getElementById(clientId).innerHTML;
                             // b.style.background = playerColor
@@ -360,70 +359,6 @@
                         })
                         divBoard.classList.add("show")
                         divBoard.appendChild(b);
-                    }
-                    else if (Plv == 2) {
-                        const bodyClick = document.body
-                        bodyClick.addEventListener("click", e => {
-                            const p_scores = document.getElementById(clientId).innerHTML;
-                            // b.style.background = playerColor
-                            const payLoad = {
-                                "method": "play",
-                                "clientId": clientId,
-                                "clientName": clientName,
-                                "gameId": gameId,
-                                // "ballId": b.tag,
-                                "color": playerColor,
-                                "pscore": parseInt(p_scores) + 2,
-                            }
-
-                            ws.send(JSON.stringify(payLoad))
-                            console.log(payLoad);
-                        })
-                        divBoard.classList.add("show")
-                        divBoard.appendChild(b);
-                    }
-                    else if (Plv == 3) {
-                        const bodyClick = document.body
-                        bodyClick.addEventListener("click", e => {
-                            const p_scores = document.getElementById(clientId).innerHTML;
-                            // b.style.background = playerColor
-                            const payLoad = {
-                                "method": "play",
-                                "clientId": clientId,
-                                "clientName": clientName,
-                                "gameId": gameId,
-                                // "ballId": b.tag,
-                                "color": playerColor,
-                                "pscore": parseInt(p_scores) + 4,
-                            }
-
-                            ws.send(JSON.stringify(payLoad))
-                            console.log(payLoad);
-                        })
-                        divBoard.classList.add("show")
-                        divBoard.appendChild(b);
-                    }
-                    else if (Plv == 4) {
-                        const bodyClick = document.body
-                        bodyClick.addEventListener("click", e => {
-                            const p_scores = document.getElementById(clientId).innerHTML;
-                            // b.style.background = playerColor
-                            const payLoad = {
-                                "method": "play",
-                                "clientId": clientId,
-                                "clientName": clientName,
-                                "gameId": gameId,
-                                // "ballId": b.tag,
-                                "color": playerColor,
-                                "pscore": parseInt(p_scores) + 8,
-                            }
-
-                            ws.send(JSON.stringify(payLoad))
-                            console.log(payLoad);
-                        })
-                        divBoard.classList.add("show")
-                        divBoard.appendChild(b);
-                    }
 
                 }
             }
@@ -457,42 +392,12 @@
                         showWinner.classList.add("show")
                         const btnReset = document.querySelector("#reset");
                         btnReset.classList.add("show");
-                        bodyClick.disabled = !event.target.checked;
                     }
 
                 }
 
             }
         }
-        btnUpgradePX.addEventListener("click", e => {
-            if (Plv == 1) {
-                parseInt(p_scores)
-                if (p_scores > 20) {
-                    p_scores = p_scores - 20;
-                }
-                else if (p_scores < 20) {
-                    alert("can't upgrade");
-                }
-            }
-            else if (Plv == 2) {
-                parseInt(p_scores)
-                if (p_scores > 40) {
-                    p_scores = p_scores - 40;
-                }
-                else if (p_scores < 40) {
-                    // alert("can't upgrade");
-                }
-            }
-            else if (Plv == 3) {
-                parseInt(p_scores)
-                if (p_scores > 80) {
-                    p_scores = p_scores - 80;
-                }
-                else if (p_scores < 80) {
-                    // alert("can't upgrade");
-                }
-            }
-        })
     </script>
 </body>
 
