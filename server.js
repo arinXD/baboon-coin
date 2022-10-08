@@ -1,8 +1,8 @@
 const http = require("http");
 const app = require("express")();
-app.get("/", (req,res)=> res.sendFile(__dirname + "/index.html"))
+app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"))
 
-app.listen(8888, ()=>console.log("Listening on http port 8888"))
+app.listen(8888, () => console.log("Listening on http port 8888"))
 const websocketServer = require("websocket").server
 const httpServer = http.createServer();
 httpServer.listen(9090, () => console.log("Listening.. on 9090"))
@@ -22,7 +22,7 @@ wsServer.on("request", request => {
     connection.on("message", message => {
 
         const result = JSON.parse(message.utf8Data)
-        
+
         //Client create a new game
         if (result.method === "create") {
 
@@ -38,7 +38,7 @@ wsServer.on("request", request => {
 
             const payLoad = {
                 "method": "create",
-                "game" : games[gameId]
+                "game": games[gameId]
             }
 
             const con = clients[clientId].connection;
@@ -47,40 +47,57 @@ wsServer.on("request", request => {
 
         //Client join to game
         if (result.method === "join") {
+            if (result.gameId in games) {
+                console.log(result);
+                console.log(typeof result.gameId);
+                const clientId = result.clientId;
+                const clientName = result.clientName;
+                const gameId = result.gameId;
+                const score = result.pscore;
+                const game = games[gameId];
+                const defaultPLV = 1;
 
-            const clientId = result.clientId;
-            const clientName = result.clientName;
-            const gameId = result.gameId;
-            const score = result.pscore;
-            const game = games[gameId];
+                if (game.clients.length > 5) {
+                    return;
+                }
 
-            if (game.clients.length >= 2) 
-            {
-                //max players return none for exception error
-                return;
+                const color = {
+                    "0": "Red",
+                    "1": "Green",
+                    "2": "Blue",
+                    "3": "#4C0033",
+                    "4": "Black",
+                }[game.clients.length]
+
+                game.clients.push({
+                    "clientId": clientId,
+                    "color": color,
+                    "clientName": clientName,
+                    "defaultPLV": defaultPLV,
+
+                })
+
+                //start the game
+                if (game.clients.length === 2) updateGameState();
+
+                const payLoad = {
+                    "method": "join",
+                    "game": game
+                }
+
+                //loop through all clients and tell them that people has joined
+                game.clients.forEach(c => {
+                    clients[c.clientId].connection.send(JSON.stringify(payLoad))
+                })
+            } else {
+                const payLoad = {
+                    "method": "game doesnt exits",
+                    "msg": "Please create or join game"
+                }
+
+                clients[result.clientId].connection.send(JSON.stringify(payLoad))
+
             }
-
-            const color =  {"0": "Red", "1": "Green", "2": "Blue"}[game.clients.length]
-
-            game.clients.push({
-                "clientId": clientId,
-                "color": color,
-                "clientName": clientName,
-
-            })
-
-            //start the game
-            if (game.clients.length === 2 ) updateGameState();
-
-            const payLoad = {
-                "method": "join",
-                "game": game
-            }
-
-            //loop through all clients and tell them that people has joined
-            game.clients.forEach(c => {
-                clients[c.clientId].connection.send(JSON.stringify(payLoad))
-            })
         }
 
         //Client plays (click button)
@@ -91,10 +108,24 @@ wsServer.on("request", request => {
             const clientName = result.clientName;
             const ballId = result.ballId;
             const color = result.color;
-            const score = result.pscore;
+            let score = result.pscore;
+            const PLV = result.PLV;
+            if (PLV == 1) {
+                score += 1;
+            }
+            else if (PLV == 2) {
+                score += 10;
+            }
+            else if (PLV == 3) {
+                score += 20;
+            }
+            else {
+                score += 20;
+            }
             let state = games[gameId].state;
             let state2 = games[gameId].state2;
             let state3 = games[gameId].state3;
+            let state4 = games[gameId].state4;
 
             if (!state)
                 state = {}
@@ -102,14 +133,51 @@ wsServer.on("request", request => {
                 state2 = {}
             if (!state3)
                 state3 = {}
+            if (!state4)
+                state4 = {}
 
             state[ballId] = color;
             state2[clientID] = score;
             state3[clientID] = clientName;
+            state4[clientID] = PLV;
             games[gameId].state = state;
             games[gameId].state2 = state2;
             games[gameId].state3 = state3;
-            
+            games[gameId].state4 = state4;
+        }
+
+        //Client plays but upgrade
+        if (result.method === "upgrade") {
+
+            const gameId = result.gameId;
+            const clientID = result.clientId;
+            const clientName = result.clientName;
+            const ballId = result.ballId;
+            const color = result.color;
+            const score = result.pscore;
+            const PLV = result.PLV;
+            let state = games[gameId].state;
+            let state2 = games[gameId].state2;
+            let state3 = games[gameId].state3;
+            let state4 = games[gameId].state4;
+
+            if (!state)
+                state = {}
+            if (!state2)
+                state2 = {}
+            if (!state3)
+                state3 = {}
+            if (!state4)
+                state4 = {}
+
+            state[ballId] = color;
+            state2[clientID] = score;
+            state3[clientID] = clientName;
+            state4[clientID] = PLV;
+            games[gameId].state = state;
+            games[gameId].state2 = state2;
+            games[gameId].state3 = state3;
+            games[gameId].state4 = state4;
         }
 
     })
@@ -117,7 +185,7 @@ wsServer.on("request", request => {
     //generate a new clientId
     const clientId = guid();
     clients[clientId] = {
-        "connection":  connection
+        "connection": connection
     }
 
     const payLoad = {
@@ -130,7 +198,7 @@ wsServer.on("request", request => {
 })
 
 
-function updateGameState(){
+function updateGameState() {
 
     for (const g of Object.keys(games)) {
         const game = games[g]
@@ -139,7 +207,7 @@ function updateGameState(){
             "game": game
         }
 
-        game.clients.forEach(c=> {
+        game.clients.forEach(c => {
             clients[c.clientId].connection.send(JSON.stringify(payLoad))
         })
     }
@@ -151,9 +219,9 @@ function updateGameState(){
 
 
 function S4() {
-    return (((1+Math.random())*0x10000)|0).toString(16).substring(1); 
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 }
- 
-const guid = () => (S4() + S4() + "-" + S4() + "-4" + S4().substr(0,3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
- 
+
+const guid = () => (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
+
 

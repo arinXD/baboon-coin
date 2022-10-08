@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baboon Coin</title>
+    <title>Baboon Kuay</title>
     <!-- <link rel="stylesheet" href="./style.css"> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -14,12 +14,6 @@
 
         html {
             font-family: 'Kanit', sans-serif;
-        }
-
-        body {
-            background: no-repeat url(https://img.freepik.com/free-vector/flat-tropical-jungle-background_23-2148934760.jpg?w=740&t=st=1665210565~exp=1665211165~hmac=95221fd227c79a14a40b500917f9d42fa1779291a73f657a88be309c7fd4b9c9);
-            background-size: cover;
-            background-position: 50% 50%;
         }
 
         .containerq {
@@ -56,7 +50,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
 
             /* display: grid;
             grid-template-columns: repeat(2, auto);
@@ -133,14 +126,9 @@
         .mtq2 {
             margin-top: -200px;
         }
-
-        .ty {
+        .ty{
             z-index: 99;
         }
-
-        /* #containerContent{
-            height: 100vh;
-        } */
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
@@ -170,11 +158,12 @@
 </head>
 
 <body>
-    <div class="border" id="containerContent">
+    <div class="container">
         <div id="show-winner" class="alert alert-warning alert-dismissible fade mt-4" role="alert"></div>
-        <div id="logo-wrap" class="logo mar">
+        <!-- <div id="countdown" class = "dis"></div> -->
+        <div class="logo mar">
             <div class="img-logo text-center mb-3 "></div>
-            <h1 class="text-center text-white">BABOON COIN</h1>
+            <h1 class="text-center ">BABOON COIN</h1>
         </div>
         <div class="d-grid gap-2 ">
             <button class="btn btn-danger dis w-50 mta mb-3" id="reset" type="button"
@@ -190,8 +179,7 @@
                 <div class="input-group mb-4 w-50 mta">
                     <input type="text" class="form-control" placeholder="Room Code" aria-label="Recipient's username"
                         aria-describedby="button-addon2" id='txtGameId' required>
-                    <button class="btn btn-outline-primary bg-primary text-white" id='btnCreate' type="button"
-                        id="button-addon2">Create
+                    <button class="btn btn-outline-primary" id='btnCreate' type="button" id="button-addon2">Create
                         Room</button>
                 </div>
                 <div class="d-grid gap-2 w-50 mta">
@@ -199,26 +187,29 @@
                 </div>
             </form>
         </div>
-        <div id="gameid"></div>
-        <div class="containerq">
-            <div id='divPlayers' class="mt"></div>
-            <div id='divBoard' class="center mt"></div>
-        </div>
+        <nav class="navbar fixed-bottom navbar-light bg-light dis ty" id="fix">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Fixed bottom</a>
+                <button id="btnUpgradePX">666</button>
+            </div>
+        </nav>
     </div>
-    <nav class="navbar fixed-bottom navbar-light bg-light dis ty" id="fix">
-        <div class="container-fluid">
-            <button id="btnUpgradePX">Upgrade</button>
-        </div>
-    </nav>
+    <div id="gameid"></div>
+    <div class="containerq">
+        <div id='divPlayers' class="mt"></div>
+        <div id='divBoard' class="center mt"></div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
-        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
-    </script>
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
-        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
-    </script>
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
 
     <script>
-        const btnUpgradePX = document.getElementById("btnUpgradePX");
+
+
+
         const btnCreate = document.getElementById("btnCreate");
         const btnJoin = document.getElementById("btnJoin");
         const txtGameId = document.getElementById("txtGameId");
@@ -232,14 +223,12 @@
         let playerColor = null;
 
         // let IPaddress = "172.16.0.180"
-        // let IPaddress = "172.16.3.243"
-        let IPaddress = "172.16.3.243"
+        let IPaddress = "10.66.134.81"
 
 
         let ws = new WebSocket("ws://" + IPaddress + ":9090")
 
         //wiring events
-
         btnJoin.addEventListener("click", e => {
 
             if (gameId === null) {
@@ -271,12 +260,9 @@
 
         })
 
-
-
         ws.onmessage = message => {
             //message.data
             const response = JSON.parse(message.data);
-
             //connect
             if (response.method === "connect") {
                 clientId = response.clientId;
@@ -285,75 +271,24 @@
 
             //create
             if (response.method === "create") {
+
                 gameId = response.game.id;
                 console.log("game id: " + response.game.id)
+
                 txtGameId.value = gameId
+
             }
 
-            //doesnt create game
-            if (response.method === "game doesnt exits") {
-                alert(response.msg)
-                window.location.reload();
-            }
 
-            // upgrade pickaxe
-            btnUpgradePX.addEventListener("click", e => {
-                let p_scores = parseInt(document.getElementById(clientId).innerHTML);
-                if (p_scores > 20 && Plv==1) {
-                    p_scores -= 20;
-                    const payLoad = {
-                        "method": "upgrade",
-                        "clientId": clientId,
-                        "clientName": clientName,
-                        "gameId": gameId,
-                        "color": playerColor,
-                        "pscore": p_scores,
-                        "PLV": Plv + 1,
-                    }
-
-                    ws.send(JSON.stringify(payLoad));
-                }
-                else if (p_scores > 100 && Plv==2 ) {
-                    p_scores -= 100;
-                    const payLoad = {
-                        "method": "upgrade",
-                        "clientId": clientId,
-                        "clientName": clientName,
-                        "gameId": gameId,
-                        "color": playerColor,
-                        "pscore": p_scores,
-                        "PLV": Plv + 1,
-                    }
-
-                    ws.send(JSON.stringify(payLoad));
-
-                }
-                else if (p_scores > 200 && Plv==3) {
-                    p_scores -= 200;
-                    const payLoad = {
-                        "method": "upgrade",
-                        "clientId": clientId,
-                        "clientName": clientName,
-                        "gameId": gameId,
-                        "color": playerColor,
-                        "pscore": p_scores,
-                        "PLV": Plv + 1,
-                    }
-
-                    ws.send(JSON.stringify(payLoad));
-
-                }
-                else{
-                    console.log("need more coin");
-                }
-
-
-            })
+            //update
 
 
             //join
             if (response.method === "join") {
                 const game = response.game;
+
+                // const countdown = document.getElementById("countdown");
+                // countdown.className = ""
                 const navfix = document.querySelector("#fix");
                 navfix.classList.add("show");
 
@@ -363,7 +298,6 @@
                     divPlayers.removeChild(divPlayers.firstChild)
 
                 game.clients.forEach(c => {
-                    // Plv = c.defaultPLV
 
                     // DIV NAME
                     const d = document.createElement("div");
@@ -380,7 +314,7 @@
 
                     // WRAPPER
                     const wrap = document.createElement("div")
-                    wrap.classList.add("border", "mx", "mtq", "bg-white")
+                    wrap.classList.add("border", "mx", "mtq")
 
                     wrap.appendChild(d);
                     wrap.appendChild(p_scores)
@@ -394,38 +328,105 @@
                 while (divBoard.firstChild)
                     divBoard.removeChild(divBoard.firstChild)
 
+                // create button
+                // for (let i = 0; i < game.balls; i++) {
                 for (let i = 0; i < 1; i++) {
-                    const b = document.createElement("button");
-                    b.id = "ball" + (i + 1);
-                    b.tag = i + 1
-                    b.textContent = i + 1
-                    b.textContent = "DIG"
-                    b.style.fontSize = "x-large"
-                    b.style.textAlign = "center"
-                    b.style.height = "300px"
-                    b.classList.add("mx", "ww")
-                    content = document.getElementById('containerContent');
-                    content.addEventListener("click", e => {
-                        //send package
-                        const p_scores = document.getElementById(clientId).innerHTML;
-                        const payLoad = {
-                            "method": "play",
-                            "clientId": clientId,
-                            "clientName": clientName,
-                            "gameId": gameId,
-                            "color": playerColor,
-                            "pscore": parseInt(p_scores),
-                            "PLV": Plv,
-                        }
+                    // const b = document.createElement("button");
+                    // b.id = "ball" + (i + 1);
+                    // b.tag = i + 1
+                    // b.textContent = i + 1
+                    // b.textContent = "DIG"
+                    // b.style.fontSize = "x-large"
+                    // b.style.textAlign = "center"
+                    // b.style.height = "300px"
+                    // b.classList.add("mx","ww")
+                    if (Plv == 1) {
+                        const bodyClick = document.body
+                        bodyClick.addEventListener("click", e => {
+                            const p_scores = document.getElementById(clientId).innerHTML;
+                            // b.style.background = playerColor
+                            const payLoad = {
+                                "method": "play",
+                                "clientId": clientId,
+                                "clientName": clientName,
+                                "gameId": gameId,
+                                // "ballId": b.tag,
+                                "color": playerColor,
+                                "pscore": parseInt(p_scores) + 1,
+                            }
 
-                        ws.send(JSON.stringify(payLoad))
-                        console.log(payLoad);
-                    })
-                    divBoard.classList.add("show")
+                            ws.send(JSON.stringify(payLoad))
+                            console.log(payLoad);
+                        })
+                        divBoard.classList.add("show")
+                        divBoard.appendChild(b);
+                    }
+                    else if (Plv == 2) {
+                        const bodyClick = document.body
+                        bodyClick.addEventListener("click", e => {
+                            const p_scores = document.getElementById(clientId).innerHTML;
+                            // b.style.background = playerColor
+                            const payLoad = {
+                                "method": "play",
+                                "clientId": clientId,
+                                "clientName": clientName,
+                                "gameId": gameId,
+                                // "ballId": b.tag,
+                                "color": playerColor,
+                                "pscore": parseInt(p_scores) + 2,
+                            }
+
+                            ws.send(JSON.stringify(payLoad))
+                            console.log(payLoad);
+                        })
+                        divBoard.classList.add("show")
+                        divBoard.appendChild(b);
+                    }
+                    else if (Plv == 3) {
+                        const bodyClick = document.body
+                        bodyClick.addEventListener("click", e => {
+                            const p_scores = document.getElementById(clientId).innerHTML;
+                            // b.style.background = playerColor
+                            const payLoad = {
+                                "method": "play",
+                                "clientId": clientId,
+                                "clientName": clientName,
+                                "gameId": gameId,
+                                // "ballId": b.tag,
+                                "color": playerColor,
+                                "pscore": parseInt(p_scores) + 4,
+                            }
+
+                            ws.send(JSON.stringify(payLoad))
+                            console.log(payLoad);
+                        })
+                        divBoard.classList.add("show")
+                        divBoard.appendChild(b);
+                    }
+                    else if (Plv == 4) {
+                        const bodyClick = document.body
+                        bodyClick.addEventListener("click", e => {
+                            const p_scores = document.getElementById(clientId).innerHTML;
+                            // b.style.background = playerColor
+                            const payLoad = {
+                                "method": "play",
+                                "clientId": clientId,
+                                "clientName": clientName,
+                                "gameId": gameId,
+                                // "ballId": b.tag,
+                                "color": playerColor,
+                                "pscore": parseInt(p_scores) + 8,
+                            }
+
+                            ws.send(JSON.stringify(payLoad))
+                            console.log(payLoad);
+                        })
+                        divBoard.classList.add("show")
+                        divBoard.appendChild(b);
+                    }
+
                 }
             }
-
-            // update
             if (response.method === "update") {
 
                 console.log(response);
@@ -435,10 +436,12 @@
                 for (const b of Object.keys(response.game.state)) {
                     const color = response.game.state[b];
                     const ballObject = document.getElementById("ball" + b);
+                    // set color
+                    // ballObject.style.backgroundColor = color
                 }
 
                 for (const c of Object.keys(response.game.state2)) {
-                    Plv = response.game.state4[c];
+
                     // get client id
                     const new_score = response.game.state2[c];
                     const element_p_scores = document.getElementById(c);
@@ -446,7 +449,7 @@
 
                     // score
                     let checkscore = parseInt(element_p_scores.innerHTML)
-                    let limit = 100000
+                    let limit = 10
 
                     if (checkscore > limit) {
                         const showWinner = document.querySelector("#show-winner")
@@ -454,11 +457,42 @@
                         showWinner.classList.add("show")
                         const btnReset = document.querySelector("#reset");
                         btnReset.classList.add("show");
+                        bodyClick.disabled = !event.target.checked;
                     }
+
                 }
 
             }
         }
+        btnUpgradePX.addEventListener("click", e => {
+            if (Plv == 1) {
+                parseInt(p_scores)
+                if (p_scores > 20) {
+                    p_scores = p_scores - 20;
+                }
+                else if (p_scores < 20) {
+                    alert("can't upgrade");
+                }
+            }
+            else if (Plv == 2) {
+                parseInt(p_scores)
+                if (p_scores > 40) {
+                    p_scores = p_scores - 40;
+                }
+                else if (p_scores < 40) {
+                    // alert("can't upgrade");
+                }
+            }
+            else if (Plv == 3) {
+                parseInt(p_scores)
+                if (p_scores > 80) {
+                    p_scores = p_scores - 80;
+                }
+                else if (p_scores < 80) {
+                    // alert("can't upgrade");
+                }
+            }
+        })
     </script>
 </body>
 
