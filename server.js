@@ -139,6 +139,7 @@ wsServer.on("request", request => {
         "method": "connect",
         "clientId": clientId,
         "pickaxe":1,
+        "autobot":0,
     }
     //send back the client connect
     connection.send(JSON.stringify(payLoad))
