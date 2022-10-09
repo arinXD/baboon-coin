@@ -28,12 +28,68 @@
             text-shadow: -7px 0 black, 0 7px black, 7px 0 black, 0 -7px black;
         }
 
+        .pa {
+            text-shadow: -6px 0 black, 0 6px black, 6px 0 black, 0 -6px black;
+        }
+
         .pcustom {
             padding-top: 5em;
             width: 17%;
         }
-        
-        
+
+        a {
+            color: #FFC107;
+            text-decoration: none;
+        }
+
+        ul {
+            
+            list-style-type: none;
+        }
+
+        .v-effect-link {
+            margin-top: 3em !important;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .v-effect-link li {
+            display: inline-block;
+            min-width: 5em;
+            margin: 0 1.2em;
+        }
+
+        .v-effect-link a {
+            text-decoration: none;
+            display: block;
+            position: relative;
+            color: #FFC107;
+            padding: .5em 0
+        }
+
+        .v-effect-link a:hover {
+            color: #FFC107;
+        }
+
+        .v-effect-link a:hover:before {
+            left: 0;
+            width: 100%;
+        }
+
+        .v-effect-link a:before {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 5px;
+            background-color: #FFC107;
+            bottom: calc(30px);
+            right: 0;
+            transition: all 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+        }
+
+
 
 
         @media screen and (max-width: 1023px) {
@@ -41,6 +97,7 @@
                 padding-top: 3em;
                 text-shadow: -7px 0 black, 0 7px black, 7px 0 black, 0 -7px black;
             }
+
             .pcustom {
                 padding-top: 5em;
                 width: 28%;
@@ -62,11 +119,18 @@
 </head>
 
 <body>
-    <div class="conteiner text-center">
-        <h1 class="display-1   text-warning textcos" style="text-transform:uppercase ;">BaboonCoin</h1>
-        <a href="/selecthost_or_join.html" class="buttona"><img src="./img/playbottom.png" class="pcustom" alt=""></a>
-        <!-- <a href="/selecthost_or_join.html">เล่น</a> -->
+    <div class="conteiner">
+        <h1 class="display-1  text-center text-warning textcos" style="text-transform:uppercase ;">STARTGAME</h1>
+        <ul class="v-effect-link">
+            <li><a class="display-4" href="./creat.html" class="buttona">
+                    <p class="pa pt-3">CREAT</p>
+                </a></li>
+            <li><a class="display-4" href="./join.html" class="buttona">
+                    <p class="pa pt-3">JOIN</p>
+                </a></li>
+        </ul>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
         integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
