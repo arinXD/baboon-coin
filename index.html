@@ -209,7 +209,7 @@
 
 <body>
     <div class="" id="containerContent" style="height:100vh;">
-        <div id="show-winner" class="alert alert-warning alert-dismissible fade mt-4" role="alert"></div>
+        <div id="show-winner" class="alert alert-warning alert-dismissible fade" role="alert"></div>
         <div class="d-grid gap-2">
             <button class="btn btn-danger dis w-50 mta mb-3" id="reset" type="button"
                 onClick="window.location.reload();">Restart</button>
@@ -282,7 +282,7 @@
         const txtGameId = document.getElementById("txtGameId");
         const txtClientName = document.getElementById("txtClientName");
         const divPlayers = document.getElementById("divPlayers");
-        const divBoard = document.getElementById("divBoard");
+        // const divBoard = document.getElementById("divBoard");
 
         let pickaxe = null;
         let autobot = null;
@@ -448,8 +448,8 @@
                 })
 
 
-                while (divBoard.firstChild)
-                    divBoard.removeChild(divBoard.firstChild)
+                // while (divBoard.firstChild)
+                //     divBoard.removeChild(divBoard.firstChild)
 
                 for (let i = 0; i < 1; i++) {
                     console.log("Log game detail from:: Play");
@@ -481,7 +481,7 @@
                         ws.send(JSON.stringify(payLoad))
                         // console.log(payLoad);
                     })
-                    divBoard.classList.add("show")
+                    // divBoard.classList.add("show")
 
                 } //loop play
             } //method join
