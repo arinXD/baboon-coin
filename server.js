@@ -32,7 +32,7 @@ wsServer.on("request", request => {
 
             games[gameId] = {
                 "id": gameId,
-                "balls": 2,
+                "limit": result.limit,
                 "clients": []
             }
 
@@ -54,8 +54,8 @@ wsServer.on("request", request => {
                 const clientName = result.clientName;
                 const gameId = result.gameId;
                 const score = result.pscore;
-                const game = games[gameId];
                 const defaultPLV = 1;
+                const game = games[gameId];
 
                 if (game.clients.length > 5) {
                     return;
@@ -74,7 +74,6 @@ wsServer.on("request", request => {
                     "color": color,
                     "clientName": clientName,
                     "defaultPLV": defaultPLV,
-
                 })
 
                 //start the game
@@ -109,23 +108,9 @@ wsServer.on("request", request => {
             const ballId = result.ballId;
             const color = result.color;
             let score = result.pscore;
-            const PLV = result.PLV;
-            if (PLV == 1) {
-                score += 1;
-            }
-            else if (PLV == 2) {
-                score += 10;
-            }
-            else if (PLV == 3) {
-                score += 20;
-            }
-            else {
-                score += 20;
-            }
             let state = games[gameId].state;
             let state2 = games[gameId].state2;
             let state3 = games[gameId].state3;
-            let state4 = games[gameId].state4;
 
             if (!state)
                 state = {}
@@ -133,51 +118,13 @@ wsServer.on("request", request => {
                 state2 = {}
             if (!state3)
                 state3 = {}
-            if (!state4)
-                state4 = {}
 
             state[ballId] = color;
             state2[clientID] = score;
             state3[clientID] = clientName;
-            state4[clientID] = PLV;
             games[gameId].state = state;
             games[gameId].state2 = state2;
             games[gameId].state3 = state3;
-            games[gameId].state4 = state4;
-        }
-
-        //Client plays but upgrade
-        if (result.method === "upgrade") {
-
-            const gameId = result.gameId;
-            const clientID = result.clientId;
-            const clientName = result.clientName;
-            const ballId = result.ballId;
-            const color = result.color;
-            const score = result.pscore;
-            const PLV = result.PLV;
-            let state = games[gameId].state;
-            let state2 = games[gameId].state2;
-            let state3 = games[gameId].state3;
-            let state4 = games[gameId].state4;
-
-            if (!state)
-                state = {}
-            if (!state2)
-                state2 = {}
-            if (!state3)
-                state3 = {}
-            if (!state4)
-                state4 = {}
-
-            state[ballId] = color;
-            state2[clientID] = score;
-            state3[clientID] = clientName;
-            state4[clientID] = PLV;
-            games[gameId].state = state;
-            games[gameId].state2 = state2;
-            games[gameId].state3 = state3;
-            games[gameId].state4 = state4;
         }
 
     })
@@ -190,7 +137,8 @@ wsServer.on("request", request => {
 
     const payLoad = {
         "method": "connect",
-        "clientId": clientId
+        "clientId": clientId,
+        "pickaxe":1,
     }
     //send back the client connect
     connection.send(JSON.stringify(payLoad))
@@ -223,5 +171,3 @@ function S4() {
 }
 
 const guid = () => (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
-
-
