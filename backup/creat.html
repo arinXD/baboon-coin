@@ -107,10 +107,10 @@
         }
 
         .mx {
-            margin-left: 5em;
-            margin-right: 5em;
+            /* margin-left: 5em; */
+            /* margin-right: 5em; */
             margin-bottom: 4em;
-            margin-right: -0.5em;
+
         }
 
         .ww {
@@ -151,6 +151,25 @@
             z-index: 99;
         }
 
+        .wcos {
+            width: 10%;
+        }
+
+        .photoWe {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            border: 5px solid yellow;
+            margin-right: 30px;
+
+        }
+
+        .grid-player {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+        }
+
         @media screen and (max-width: 1023px) {
             .textcos {
                 padding-top: 3em;
@@ -185,10 +204,18 @@
         });
     </script>
 </head>
+<!-- <div class="">
+            <img src="./img/bg.jpg" class=" photoWe" alt="...">
+            <p class=" text-white wcos mt-3">Name<br><br><span>0</span><span class="float-end">coin</span> </p>
+        </div>
+        <div class="">
+            <img src="./img/bg.jpg" class=" photoWe" alt="...">
+            <p class=" text-white wcos mt-3">Name<br><br><span>0</span><span class="float-end">coin</span> </p>
+        </div> -->
 
 <body>
-    <div class="boder" id="containerContent" style="height: 100vh;">
-        <div id="show-winner" class="alert alert-warning alert-dismissible fade mt-4" role="alert"></div>
+    <div class="boพder" id="containerContent" style="height: 100vh;">
+        <div id="show-winner" class="alert alert-warning alert-dismissible fade" role="alert"></div>
         <div class="d-grid gap-2 ">
             <button class="btn btn-danger dis w-50 mta mb-3" id="reset" type="button"
                 onClick="window.location.reload();">Restart</button>
@@ -225,13 +252,9 @@
                 </form>
             </div>
         </div>
-        <div class="container-fluid">
-            <div id="divPlayers" class="mt-5 pt-5 d-flex align-items-end flex-column">
-                <!-- player -->
-            </div>
-            <div id="divBoard" class="center mt">
-                
-            </div>
+        <div class="container-fluid px-0">
+            <div id='divPlayers' class="d-flex align-items-start flex-column"></div>
+            <div id='divBoard' class="center mt"></div>
         </div>
     </div>
     <nav class="navbar fixed-bottom navbar-light bg-light dis ty" id="fix">
@@ -387,7 +410,7 @@
 
                     // WRAPPER
                     const wrap = document.createElement("div");
-                    wrap.classList.add("border", "mx", "mtq", "bg-white");
+                    wrap.classList.add("border", "bg-white");
 
                     wrap.appendChild(d);
                     wrap.appendChild(p_scores);

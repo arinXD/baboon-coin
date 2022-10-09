@@ -28,7 +28,8 @@ wsServer.on("request", request => {
 
             const clientId = result.clientId;
             // const gameId = guid();
-            const gameId = "asdf";
+            const gameId = makeid();
+            // const gameId = "asdf";
 
             games[gameId] = {
                 "id": gameId,
@@ -57,7 +58,7 @@ wsServer.on("request", request => {
                 const defaultPLV = 1;
                 const game = games[gameId];
 
-                if (game.clients.length > 5) {
+                if (game.clients.length > 6) {
                     return;
                 }
 
@@ -67,6 +68,7 @@ wsServer.on("request", request => {
                     "2": "Blue",
                     "3": "#4C0033",
                     "4": "Black",
+                    "5": "Orange",
                 }[game.clients.length]
 
                 game.clients.push({
@@ -166,6 +168,14 @@ function updateGameState() {
 }
 
 
+function makeid() {
+    let result           = '';
+    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for ( let i = 0; i <= 6; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 6));
+   }
+   return result;
+}
 
 function S4() {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
