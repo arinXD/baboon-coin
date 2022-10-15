@@ -163,10 +163,11 @@
         .textcos {
             text-shadow: -7px 0 black, 0 7px black, 7px 0 black, 0 -7px black;
         }
-        #fix{
+
+        #fix {
             position: fixed;
             bottom: 0;
-            background-color: rgb(255, 255, 255,.75);
+            background-color: rgb(255, 255, 255, .75);
             padding: 1em;
             border-radius: 1em;
             width: fit-content;
@@ -208,11 +209,10 @@
 </head>
 
 <body>
-    <div class="" id="containerContent" style="height:100vh;">
+    <div class="" id="containerContent" style="height: 100%; z-index: 0;">
         <div id="show-winner" class="alert alert-warning alert-dismissible fade" role="alert"></div>
         <div class="d-grid gap-2">
-            <button class="btn btn-danger dis w-50 mta mb-3" id="reset" type="button"
-                onClick="window.location.reload();">Restart</button>
+            <button class="btn btn-danger dis w-50 mta mb-3" id="resetBtn" type="button">Restart</button>
         </div>
         <div class="hi">
             <div id="logo-wrap" class="logo mar">
@@ -226,7 +226,8 @@
                 </div>
                 <div class="input-group mb-3 w-52 mall">
                     <select id="limit-select" class="form-select" aria-label="Default select example">
-                        <option value="100" selected>100 coin</option>
+                        <option value="10" selected>10 coin</option>
+                        <option value="100">100 coin</option>
                         <option value="1000">1,000 coin</option>
                         <option value="10000">10,000 coin</option>
                         <option value="100000">100,000 coin</option>
@@ -254,8 +255,8 @@
             </div>
             <!-- <div id='divBoard' class="center mt"> -->
 
-            </div>
         </div>
+    </div>
     </div>
     <div class="dis ty" id="fix">
         <div class="container-fluid d-block">
@@ -282,6 +283,10 @@
         const txtGameId = document.getElementById("txtGameId");
         const txtClientName = document.getElementById("txtClientName");
         const divPlayers = document.getElementById("divPlayers");
+        const resetBtn = document.getElementById("resetBtn");
+        const showWinner = document.querySelector("#show-winner")
+        const btnReset = document.querySelector("#resetBtn");
+        const contentDiv = document.getElementById('containerContent');
         // const divBoard = document.getElementById("divBoard");
 
         let pickaxe = null;
@@ -290,10 +295,11 @@
         let gameId = null;
         let clientName = null;
         let playerColor = null;
+        let playStatus = null;
 
 
         // let IPaddress = "172.16.0.180"
-        let IPaddress = "10.48.104.53"
+        let IPaddress = "localhost"
 
 
         let ws = new WebSocket("ws://" + IPaddress + ":9090")
@@ -331,9 +337,23 @@
 
         })
 
-
-
         ws.onmessage = message => {
+
+
+            // reset
+            resetBtn.addEventListener('click', function () {
+                playStatus = "off"
+
+                const payLoad = {
+                    "method": "reset",
+                    "gameId": gameId,
+                }
+                // showWinner.classList.remove("show")
+                // btnReset.classList.remove("show");
+                ws.send(JSON.stringify(payLoad));
+
+            })
+
             //message.data
             const response = JSON.parse(message.data);
 
@@ -368,7 +388,7 @@
 
             // autobot
             if (autobot != null) {
-                console.log("Autobot LV:: " + autobot);
+                // console.log("Autobot LV:: " + autobot);
                 let delayInMilliseconds = 0
                 if (autobot == 1) {
                     console.log("autobot lv.1 activate");
@@ -428,7 +448,8 @@
                     // DIV SCORE
                     const p_scores = document.createElement("p");
                     const p = document.createElement("p");
-                    p_scores.classList.add("text-center", "my-2")
+                    p_scores.style.zIndex = 10;
+                    p_scores.classList.add("text-center", "my-2", "playerClass")
                     p_scores.textContent = "0"
                     p.classList.add("text-center", "m-1")
                     p.textContent = "coin"
@@ -437,6 +458,7 @@
                     // WRAPPER
                     const wrap = document.createElement("div")
                     wrap.classList.add("border", "mx", "mtq", "bg-white")
+                    wrap.style.zIndex = 10;
 
                     wrap.appendChild(d);
                     wrap.appendChild(p_scores)
@@ -452,22 +474,51 @@
                 //     divBoard.removeChild(divBoard.firstChild)
 
                 for (let i = 0; i < 1; i++) {
-                    console.log("Log game detail from:: Play");
-                    console.log(response.game);
-                    console.log(response.game.clients);
-                    console.log("Pickaxe Level:: " + pickaxe);
 
-                    const content = document.getElementById('containerContent');
-                    content.addEventListener("click", e => {
+                    const playerClass = document.querySelectorAll(".playerClass");
+                    playerClass.forEach(e => {
+                        e.addEventListener('click', function () {
+                            // contentDiv.removeEventListener('click', play)
+                            const payLoad = {
+                                "method": "play",
+                                "clientId": e.id,
+                                "clientName": clientName,
+                                "gameId": gameId,
+                                "color": playerColor,
+                                "pscore": parseInt(e.innerHTML) - 1,
+                                "reset": false,
+                            }
+                            console.log(payLoad);
+                            ws.send(JSON.stringify(payLoad));
 
+                        })
+                    });
+
+                    function play() {
                         const p_scores = document.getElementById(clientId).innerHTML;
-                        console.log("Log from Play(Pickaxe Level):: " + pickaxe);
-                        console.log("Log from Play(AutoBot Level):: " + autobot);
+                        // console.log("Log from Play(Pickaxe Level):: " + pickaxe);
+                        // console.log("Log from Play(AutoBot Level):: " + autobot);
                         let score = parseInt(p_scores);
-                        if (pickaxe == 1) score += 1;
-                        else if (pickaxe == 2) score += 5;
-                        else if (pickaxe == 3) score += 10;
-                        else score += 20;
+                        if (playStatus == null) {
+                            if (pickaxe == 1) score += 1;
+                            else if (pickaxe == 2) score += 5;
+                            else if (pickaxe == 3) score += 10;
+                            else score += 20;
+                        } else {
+                            score = 0;
+                            const payLoad = {
+                                "method": "play",
+                                "clientId": clientId,
+                                "clientName": clientName,
+                                "gameId": gameId,
+                                "color": playerColor,
+                                "pscore": score,
+                                "reset": false,
+                            }
+
+                            ws.send(JSON.stringify(payLoad))
+                            playStatus = null;
+                        }
 
                         const payLoad = {
                             "method": "play",
@@ -476,12 +527,19 @@
                             "gameId": gameId,
                             "color": playerColor,
                             "pscore": score,
+                            "reset": false,
                         }
 
                         ws.send(JSON.stringify(payLoad))
                         // console.log(payLoad);
-                    })
-                    // divBoard.classList.add("show")
+                    }
+
+                    console.log("Log game detail from:: Play");
+                    console.log(response.game);
+                    console.log(response.game.clients);
+                    console.log("Pickaxe Level:: " + pickaxe);
+
+                    contentDiv.addEventListener("click", play)
 
                 } //loop play
             } //method join
@@ -509,6 +567,7 @@
                         "gameId": gameId,
                         "color": playerColor,
                         "pscore": p_scores,
+                        "reset": false,
                     }
                     ws.send(JSON.stringify(payLoad));
 
@@ -537,6 +596,7 @@
                         "gameId": gameId,
                         "color": playerColor,
                         "pscore": p_scores,
+                        "reset": false,
                     }
                     ws.send(JSON.stringify(payLoad));
 
@@ -555,6 +615,7 @@
                         "gameId": gameId,
                         "color": playerColor,
                         "pscore": p_scores,
+                        "reset": false,
                     }
                     ws.send(JSON.stringify(payLoad));
 
@@ -573,6 +634,7 @@
                         "gameId": gameId,
                         "color": playerColor,
                         "pscore": p_scores,
+                        "reset": false,
                     }
                     ws.send(JSON.stringify(payLoad));
                 } else {
@@ -597,15 +659,16 @@
                     // score
                     let checkscore = parseInt(element_p_scores.innerHTML)
 
-                    if (checkscore > response.game.limit) {
-                        const content = document.getElementById('containerContent');
-                        const showWinner = document.querySelector("#show-winner")
+                    if (checkscore == response.game.limit) {
                         if (!showWinner.classList.contains("show")) {
                             showWinner.classList.add("show")
                             showWinner.innerHTML = "The winner is " + response.game.state3[c]
-                            const btnReset = document.querySelector("#reset");
                             btnReset.classList.add("show");
                         }
+                    }
+                    if (response.reset) {
+                        showWinner.classList.remove("show")
+                        btnReset.classList.remove("show");
                     }
                 }
 

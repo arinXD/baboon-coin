@@ -9,6 +9,7 @@ httpServer.listen(9090, () => console.log("Listening.. on 9090"))
 //hashmap clients
 const clients = {};
 const games = {};
+let reset = null;
 
 const wsServer = new websocketServer({
     "httpServer": httpServer
@@ -103,7 +104,7 @@ wsServer.on("request", request => {
 
         //Client plays (click button)
         if (result.method === "play") {
-
+            reset = result.reset;
             const gameId = result.gameId;
             const clientID = result.clientId;
             const clientName = result.clientName;
@@ -128,6 +129,31 @@ wsServer.on("request", request => {
             games[gameId].state2 = state2;
             games[gameId].state3 = state3;
         }
+        //Client plays (click button)
+        if (result.method === "reset") {
+            reset=true;
+            const gameId = result.gameId;
+
+            let score = 0;
+            let state2 = games[gameId].state2;
+            
+            if (!state2)
+            state2 = {}
+            
+            console.log(games[gameId]);
+            games[gameId].clients.forEach(e => {
+                state2[e.clientId] = score;
+                
+            });
+            games[gameId].state2 = state2;
+
+            const payLoad = {
+                "method": "reset",
+                "game": games[gameId]
+            }
+            connection.send(JSON.stringify(payLoad))
+        }
+
 
     })
 
@@ -140,8 +166,8 @@ wsServer.on("request", request => {
     const payLoad = {
         "method": "connect",
         "clientId": clientId,
-        "pickaxe":1,
-        "autobot":0,
+        "pickaxe": 1,
+        "autobot": 0,
     }
     //send back the client connect
     connection.send(JSON.stringify(payLoad))
@@ -155,7 +181,9 @@ function updateGameState() {
         const game = games[g]
         const payLoad = {
             "method": "update",
-            "game": game
+            "game": game,
+            "reset":reset
+            
         }
 
         game.clients.forEach(c => {
@@ -169,12 +197,12 @@ function updateGameState() {
 
 
 function makeid() {
-    let result           = '';
-    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for ( let i = 0; i <= 6; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * 6));
-   }
-   return result;
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i <= 6; i++) {
+        result += characters.charAt(Math.floor(Math.random() * 6));
+    }
+    return result;
 }
 
 function S4() {
