@@ -173,12 +173,21 @@
             width: fit-content;
         }
 
-        /* #containerContent{
-            height: 100vh;
-        } */
         .break-words {
             word-break: break-all;
             white-space: normal;
+        }
+
+        .p-relative {
+            position: relative !important;
+        }
+
+        .cursor-default {
+            cursor: default;
+        }
+
+        .cursor-png {
+            cursor: url(./img/bababa_32px.svg), auto;
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -209,10 +218,11 @@
 </head>
 
 <body>
-    <div class="" id="containerContent" style="height: 100%; z-index: 0;">
+    <div class="" id="containerContent" style="height: 100%; z-index: 0; position: relative;">
         <div id="show-winner" class="alert alert-warning alert-dismissible fade" role="alert"></div>
         <div class="d-grid gap-2">
-            <button class="btn btn-danger dis w-50 mta mb-3" id="resetBtn" type="button">Restart</button>
+            <button class="btn btn-success dis w-50 mta mb-3" id="resetBtn" type="button">Restart</button>
+            <button class="btn btn-danger dis w-50 mta mb-3" id="reloadBtn" type="button" onclick="window.location.reload()">New game</button>
         </div>
         <div class="hi">
             <div id="logo-wrap" class="logo mar">
@@ -276,6 +286,7 @@
     </script>
 
     <script>
+        // res.header("Set-Cookie", "HttpOnly;Secure;SameSite=None");
         const btnUpgradeAutobot = document.getElementById("btnUpgradeBot");
         const btnUpgradePX = document.getElementById("btnUpgradePX");
         const btnCreate = document.getElementById("btnCreate");
@@ -286,8 +297,8 @@
         const resetBtn = document.getElementById("resetBtn");
         const showWinner = document.querySelector("#show-winner")
         const btnReset = document.querySelector("#resetBtn");
+        const btnReload = document.querySelector("#reloadBtn");
         const contentDiv = document.getElementById('containerContent');
-        // const divBoard = document.getElementById("divBoard");
 
         let pickaxe = null;
         let autobot = null;
@@ -296,6 +307,7 @@
         let clientName = null;
         let playerColor = null;
         let playStatus = null;
+        let limit = 0;
 
 
         // let IPaddress = "172.16.0.180"
@@ -449,7 +461,7 @@
                     const p_scores = document.createElement("p");
                     const p = document.createElement("p");
                     p_scores.style.zIndex = 10;
-                    p_scores.classList.add("text-center", "my-2", "playerClass")
+                    p_scores.classList.add("text-center", "my-2", "playerClass", "p-relative")
                     p_scores.textContent = "0"
                     p.classList.add("text-center", "m-1")
                     p.textContent = "coin"
@@ -457,7 +469,7 @@
 
                     // WRAPPER
                     const wrap = document.createElement("div")
-                    wrap.classList.add("border", "mx", "mtq", "bg-white")
+                    wrap.classList.add("border", "mx", "mtq", "bg-white", "p-relative")
                     wrap.style.zIndex = 10;
 
                     wrap.appendChild(d);
@@ -479,6 +491,7 @@
                     playerClass.forEach(e => {
                         e.addEventListener('click', function () {
                             // contentDiv.removeEventListener('click', play)
+
                             const payLoad = {
                                 "method": "play",
                                 "clientId": e.id,
@@ -490,6 +503,7 @@
                             }
                             console.log(payLoad);
                             ws.send(JSON.stringify(payLoad));
+                            // contentDiv.addEventListener('click', play)
 
                         })
                     });
@@ -500,10 +514,33 @@
                         // console.log("Log from Play(AutoBot Level):: " + autobot);
                         let score = parseInt(p_scores);
                         if (playStatus == null) {
-                            if (pickaxe == 1) score += 1;
-                            else if (pickaxe == 2) score += 5;
-                            else if (pickaxe == 3) score += 10;
-                            else score += 20;
+                            let critical = Math.floor(Math.random() * 5);
+                            if (critical == 1) {
+                                console.log("critical");
+                                critical = 1.5
+                                if (pickaxe == 1) {
+                                    score += 1*critical;
+                                } else if (pickaxe == 2) {
+                                    score += (1+5)*critical;
+                                } else if (pickaxe == 3) {
+                                    score += (1+10)*critical;
+                                } else {
+                                    score += (1+20)*critical;
+                                }
+                                console.log(score);
+                            }else{
+                                if (pickaxe == 1) {
+                                    score = score + 1;             
+                                } else if (pickaxe == 2) {
+                                    score += (1+5);
+                                } else if (pickaxe == 3) {
+                                    score += (1+10);
+                                } else {
+                                    score += (1+20);
+                                }
+                                console.log(score);
+                            }
+
                         } else {
                             score = 0;
                             const payLoad = {
@@ -531,7 +568,7 @@
                         }
 
                         ws.send(JSON.stringify(payLoad))
-                        // console.log(payLoad);
+                        console.log(payLoad);
                     }
 
                     console.log("Log game detail from:: Play");
@@ -541,6 +578,13 @@
 
                     contentDiv.addEventListener("click", play)
 
+                    // contentDiv.addEventListener("mousedown", function () {
+                    //     contentDiv.classList.add("cursor-png");
+                    // })
+                    // contentDiv.addEventListener("mouseup", function () {
+                    //     contentDiv.classList.add("cursor-png");
+                    // })
+
                 } //loop play
             } //method join
 
@@ -549,11 +593,11 @@
             btnUpgradeAutobot.addEventListener("click", e => {
 
                 const autobotLevel = document.getElementById("autobot-show-level")
-                autobotLevel.innerHTML = "อูก้าๆๆ";
                 let p_scores = document.getElementById(clientId).innerHTML;
 
                 if ((p_scores >= 10000) && (autobot === 0)) {
                     btnUpgradeAutobot.innerHTML = "Baboon Assemble";
+                    // autobotLevel.innerHTML = "อูก้าๆๆ";
                     p_scores -= 10000;
                     autobot = 1;
 
@@ -664,11 +708,14 @@
                             showWinner.classList.add("show")
                             showWinner.innerHTML = "The winner is " + response.game.state3[c]
                             btnReset.classList.add("show");
+                            btnReload.classList.add("show");
+                            
                         }
                     }
                     if (response.reset) {
                         showWinner.classList.remove("show")
                         btnReset.classList.remove("show");
+                        btnReload.classList.remove("show");
                     }
                 }
 
